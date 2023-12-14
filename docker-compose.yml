@@ -1,0 +1,19 @@
+services:
+  app:
+    image: ${HARBOR_DOMAIN_NAME}/model-serving/chest_ct_ner:latest
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    ports:
+      - 9528:9528
+    environment:
+      TRACKING_URI: ${TRACKING_URI}
+      MODEL_NAME: ${MODEL_NAME}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      MLFLOW_S3_ENDPOINT_URL: ${MLFLOW_S3_ENDPOINT_URL}
+      MLFLOW_S3_IGNORE_TLS: ${MLFLOW_S3_IGNORE_TLS}
