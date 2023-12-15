@@ -1,6 +1,3 @@
-import os
-
-import mlflow
 import transformers
 import onnxruntime as ort
 from fastapi import FastAPI, Request, Form
@@ -11,20 +8,12 @@ from spacy import displacy
 import utils
 
 
-mlflow.set_tracking_uri(os.getenv("TRACKING_URI"))  # os.getenv("TRACKING_URI") "http://192.168.1.76:9527"
-client = mlflow.MlflowClient()
-model_name = os.getenv("MODEL_NAME")  # os.getenv("MODEL_NAME") "Chest_CT_NER"
-run_id =  client.get_registered_model(model_name).latest_versions[0].run_id
+session = ort.InferenceSession("./onnx_model/model.onnx", providers=["CUDAExecutionProvider", "CPUExecutionProvider"])
 
-onnx_model = mlflow.onnx.load_model(f"models:/{model_name}/latest")
-serialized_model = onnx_model.SerializeToString()
-session = ort.InferenceSession(serialized_model, providers=["CUDAExecutionProvider", "CPUExecutionProvider"])
+with open("./label_list.txt") as file:
+    label_list = eval(file.read())
 
-run = mlflow.get_run(run_id)
-pretrained_model_name_or_path = run.data.params["pretrained_model_name_or_path"]
-label_list = eval(run.data.params["label_list"])
-
-tokenizer = transformers.AutoTokenizer.from_pretrained(pretrained_model_name_or_path)
+tokenizer = transformers.AutoTokenizer.from_pretrained("./tokenizer")
 id2label = {i: tag for i, tag in enumerate(label_list)}
 
 ent_type = set([label.split("-")[-1] for label in label_list if "-" in label])
