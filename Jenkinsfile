@@ -11,6 +11,8 @@ pipeline {
             HARBOR_USERNAME = credentials('ad6a7fbe-ab1e-4ee9-ad88-53f01c149452')
             HARBOR_PASSEORD = credentials('f11bdace-06a9-4614-83d9-92a3eb7d2409')
             LATEST_MODEL_VERSION = ''
+            CONTAINER_NAME = 'Chest_CT_NER-Serving'
+            PORT = '9528'
         }
     stages {
         stage('Download model') {
@@ -30,6 +32,11 @@ pipeline {
         stage('Build and Push image') {
             steps {
                 sh "2_build_push_image/run_build_push_image.sh ${LATEST_MODEL_VERSION}"
+            }
+        }
+        stage('Model serving') {
+            steps {
+                sh "3_model_serving/run_model_serving.sh"
             }
         }
     }
