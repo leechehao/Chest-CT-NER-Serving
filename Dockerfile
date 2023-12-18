@@ -14,4 +14,4 @@ WORKDIR /src
 
 EXPOSE 9528
 
-ENTRYPOINT ["uvicorn", "app:app" , "--host", "0.0.0.0", "--port", "9528"]
+ENTRYPOINT ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "9528"]
