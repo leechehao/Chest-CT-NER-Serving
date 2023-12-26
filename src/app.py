@@ -1,3 +1,5 @@
+import os
+
 import transformers
 import onnxruntime as ort
 from fastapi import FastAPI
@@ -13,7 +15,10 @@ class NERRequest(BaseModel):
     text: str
 
 
-session = ort.InferenceSession("./onnx_model/model.onnx", providers=["CUDAExecutionProvider", "CPUExecutionProvider"])
+cuda_available = os.environ.get("CUDA_AVAILABLE", "false") == "true"
+providers = ["CUDAExecutionProvider", "CPUExecutionProvider"] if cuda_available else ["CPUExecutionProvider"]
+
+session = ort.InferenceSession("./onnx_model/model.onnx", providers=providers)
 tokenizer = transformers.AutoTokenizer.from_pretrained("./tokenizer")
 
 with open("./label_list.txt") as file:
