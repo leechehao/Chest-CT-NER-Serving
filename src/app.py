@@ -49,3 +49,13 @@ async def perform_ner(request: NERRequest):
         for ent in pipeline(text) if ent["entity_group"] != "O"
     ]
     return {"text": text, "entities": output}
+
+
+@app.get("/liveness")
+async def liveness_check():
+    return {"status": "ok"}
+
+
+@app.get("/readiness")
+async def readiness_check():
+    return {"status": "ok"}
