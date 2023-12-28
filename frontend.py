@@ -3,7 +3,7 @@ import gradio as gr
 
 
 def ner(text):
-    response = requests.post("http://192.168.1.76:9528/ner", json={"text": text})
+    response = requests.post("http://chest-ct-api-service:9977/ner", json={"text": text})
     return response.json()
 
 

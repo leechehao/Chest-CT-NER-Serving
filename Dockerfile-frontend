@@ -1,0 +1,8 @@
+FROM python:3.10-slim
+
+RUN pip install requests gradio && \
+    rm -rf /root/.cache/pip
+
+COPY frontend.py .
+
+ENTRYPOINT ["python", "frontend.py"]
