@@ -21,6 +21,7 @@ class Pipeline:
         self.tokenizer = tokenizer
         self.id2label = id2label
         self.aggregation_strategy = aggregation_strategy
+        self.input_names = [key.name for key in session.get_inputs()]
 
     def __call__(self, sentence: str):
         tokenized_inputs = self.tokenizer(
@@ -32,6 +33,9 @@ class Pipeline:
 
         offset_mapping = tokenized_inputs.pop("offset_mapping")
         special_tokens_mask = tokenized_inputs.pop("special_tokens_mask")
+        keys_to_remove = [key for key in tokenized_inputs if key not in self.input_names]
+        for key in keys_to_remove:
+            tokenized_inputs.pop(key)
         out = self.session.run(None, dict(tokenized_inputs))
 
         logits = out[0][0]
@@ -133,7 +137,7 @@ class Pipeline:
         return self.group_entities(entities)
 
     def aggregate_word(self, entities: List[dict]) -> dict:
-        word = self.tokenizer.convert_tokens_to_string([entity["word"] for entity in entities])
+        word = [entity["word"] for entity in entities]
         if self.aggregation_strategy == AggregationStrategy.FIRST:
             scores = entities[0]["scores"]
             idx = scores.argmax()
@@ -215,7 +219,10 @@ class Pipeline:
         # Get the first entity in the entity group
         entity = entities[0]["entity"].split("-")[-1]
         scores = np.nanmean([entity["score"] for entity in entities])
-        tokens = [entity["word"] for entity in entities]
+        if self.aggregation_strategy == AggregationStrategy.SIMPLE:
+            tokens = [entity["word"] for entity in entities]
+        else:
+            tokens = [token for entity in entities for token in entity["word"]]
 
         entity_group = {
             "entity_group": entity,
