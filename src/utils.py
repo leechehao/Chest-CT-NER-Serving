@@ -269,8 +269,3 @@ class Pipeline:
             entity_groups.append(self.group_sub_entities(entity_group_disagg))
 
         return entity_groups
-
-
-def generate_random_color_hex():
-    """Generate a random hex color code."""
-    return "#{:02x}{:02x}{:02x}".format(random.randint(128, 255), random.randint(128, 255), random.randint(128, 255))

@@ -1,0 +1,1 @@
+['O', 'B-Observation', 'I-Observation', 'B-Finding', 'I-Finding', 'B-Diagnosis', 'I-Diagnosis', 'B-Location', 'I-Location', 'B-Certainty', 'I-Certainty', 'B-Change', 'I-Change', 'B-Attribute', 'I-Attribute', 'B-Size', 'I-Size', 'B-Treatment', 'I-Treatment', "B-Normal", "I-Normal", "B-Date", "I-Date"]
